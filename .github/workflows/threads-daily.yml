@@ -2,8 +2,8 @@ name: Threads 매일 게시
 
 on:
   schedule:
-    # 매일 한국시간 오전 7:52 (UTC 22:52, 전날)
-    - cron: "52 22 * * *"
+    # 매일 한국시간 오후 12:37 (UTC 03:37)
+    - cron: "37 3 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
