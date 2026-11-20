@@ -34,8 +34,11 @@ jobs:
         run: |
           python - <<'PY'
           import os, sys, requests
+          raw = os.environ.get("THREADS_ACCESS_TOKEN", "")
+          tok = raw.strip()
+          print(f"토큰 점검: 길이 {len(tok)}자, 시작 {tok[:2]!r}, 앞뒤 공백/줄바꿈 {'있음(자동 제거)' if raw != tok else '없음'}, 중간 공백 {'있음' if any(c.isspace() for c in tok) else '없음'}")
           r = requests.get("https://graph.threads.net/v1.0/me",
-                           params={"fields": "id,username", "access_token": os.environ["THREADS_ACCESS_TOKEN"]},
+                           params={"fields": "id,username", "access_token": tok},
                            timeout=30)
           if not r.ok:
               sys.exit(f"토큰 확인 실패: {r.status_code} {r.text}")

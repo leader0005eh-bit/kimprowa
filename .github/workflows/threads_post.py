@@ -79,8 +79,8 @@ def main():
         print("DRY_RUN: 실제로 게시하지 않았습니다.")
         return
 
-    token = os.environ["THREADS_ACCESS_TOKEN"]
-    user_id = os.environ["THREADS_USER_ID"]
+    token = os.environ["THREADS_ACCESS_TOKEN"].strip()
+    user_id = os.environ.get("THREADS_USER_ID", "").strip() or "me"
     prev_id = publish(user_id, token, text)
     print(f"본문 게시 완료: {prev_id}")
     for p in parts:
