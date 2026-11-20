@@ -1,0 +1,39 @@
+name: Threads 매일 게시
+
+on:
+  schedule:
+    # 매일 한국시간 오전 7:52 (UTC 22:52, 전날)
+    - cron: "52 22 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "1이면 실제 게시 없이 미리보기만"
+        required: false
+        default: "1"
+      post_date:
+        description: "특정 날짜 글 테스트 (YYYY-MM-DD, 비우면 오늘)"
+        required: false
+        default: ""
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 패키지 설치
+        run: pip install requests
+
+      - name: 오늘 글 게시
+        env:
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          PRODUCT_LINK: ${{ secrets.PRODUCT_LINK }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || '0' }}
+          POST_DATE: ${{ github.event.inputs.post_date || '' }}
+        # 지금 저장소에는 스크립트와 posts.csv가 .github/workflows 폴더에 있어서 그 경로로 실행합니다.
+        run: python .github/workflows/threads_post.py
