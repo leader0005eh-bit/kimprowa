@@ -28,6 +28,20 @@ jobs:
       - name: 패키지 설치
         run: pip install requests
 
+      - name: Threads 계정 연결 확인
+        env:
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os, sys, requests
+          r = requests.get("https://graph.threads.net/v1.0/me",
+                           params={"fields": "id,username", "access_token": os.environ["THREADS_ACCESS_TOKEN"]},
+                           timeout=30)
+          if not r.ok:
+              sys.exit(f"토큰 확인 실패: {r.status_code} {r.text}")
+          print("연결된 Threads 계정:", r.json().get("username"))
+          PY
+
       - name: 오늘 글 게시
         env:
           THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
